@@ -11,7 +11,6 @@ from rich.console import Console
 from ls_exif import version
 from ls_exif.cli import print_tabular_listing, walk_directory
 
-
 app = typer.Typer(
     name="ls-exif",
     help="An 'ls' companion displaying EXIF metadata columns",

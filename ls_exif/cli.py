@@ -1,5 +1,5 @@
-from rich.table import Table
 from rich.markup import escape
+from rich.table import Table
 
 from .filesystem import Directory, File
 
