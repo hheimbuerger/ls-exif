@@ -16,7 +16,7 @@ headers = (
 )
 
 
-#def colorize(color, text):
+# def colorize(color, text):
 #    return f"{color}{text}{Style.RESET_ALL}"
 
 
@@ -59,7 +59,7 @@ def print_tabular_listing(console, base_dir, dirs, files):
     print()
 
 
-#def print_directory_listing(base_dir, dirs, files, format="table"):
+# def print_directory_listing(base_dir, dirs, files, format="table"):
 #    # directory header
 #    print()
 #    print(f"{Fore.MAGENTA}{base_dir}{Style.RESET_ALL}:")

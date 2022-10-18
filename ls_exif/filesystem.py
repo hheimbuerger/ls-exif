@@ -6,11 +6,11 @@ from functools import cached_property
 import exifread
 
 EXTENSIONS = {
-    'image': (
-        '.jpeg',
-        '.jpg',
+    "image": (
+        ".jpeg",
+        ".jpg",
     ),
-    'video': ('.mp4',),
+    "video": (".mp4",),
 }
 
 
@@ -32,11 +32,11 @@ class BaseFilesystemObject:
 
     @property
     def owner(self):
-        return 'user'
+        return "user"
 
     @property
     def group(self):
-        return 'group'
+        return "group"
 
     @property
     def permissions(self):
@@ -67,11 +67,11 @@ class File(BaseFilesystemObject):
 
     @property
     def taken_date(self):
-        return self._read_exif_value('EXIF DateTimeOriginal', expected_type=datetime) or self._read_exif_value('Image DateTime', expected_type=datetime)
+        return self._read_exif_value("EXIF DateTimeOriginal", expected_type=datetime) or self._read_exif_value("Image DateTime", expected_type=datetime)
 
     @property
     def resolution(self):
-        if self._has_exif_tags('Image ImageWidth', 'Image ImageLength'):
+        if self._has_exif_tags("Image ImageWidth", "Image ImageLength"):
             return f'{self._read_exif_value("Image ImageWidth", expected_type=int)} x {self._read_exif_value("Image ImageLength", expected_type=int)}'
         elif self._has_exif_tags("EXIF ExifImageWidth", "EXIF ExifImageLength"):
             return f'{self._read_exif_value("EXIF ExifImageWidth", expected_type=int)} x {self._read_exif_value("EXIF ExifImageLength", expected_type=int)}'
@@ -82,13 +82,13 @@ class File(BaseFilesystemObject):
 
     @property
     def camera(self):
-        if self._has_exif_tags('Image Make', 'Image Model'):
-            make = self._read_exif_value('Image Make')
-            model = self._read_exif_value('Image Model')
-            if model.lower().startswith(make.lower()):   # examples from the wild: Canon / Canon IXUS 105, HTC / HTC Hero
+        if self._has_exif_tags("Image Make", "Image Model"):
+            make = self._read_exif_value("Image Make")
+            model = self._read_exif_value("Image Model")
+            if model.lower().startswith(make.lower()):  # examples from the wild: Canon / Canon IXUS 105, HTC / HTC Hero
                 return model
             else:
-                return f'{make} {model}'
+                return f"{make} {model}"
 
     @property
     def file_size(self):
@@ -101,31 +101,40 @@ class File(BaseFilesystemObject):
         #    > God wish that americans won't have something like MM-DD-YYYY
         #    > The replace ': ' to ':0' fixes issues when it reads the string as 2006:11:09 10:54: 1.
         #    > It replaces the extra whitespace with a 0 for proper parsing
-        cleaned_date_string = exif_date_string.replace('/', '-',).replace(':', '-').replace('.', '-').replace('\\', '-').replace(': ', ':0')[:19]
-        return datetime.strptime(cleaned_date_string, '%Y-%m-%d %H-%M-%S')
+        cleaned_date_string = (
+            exif_date_string.replace(
+                "/",
+                "-",
+            )
+            .replace(":", "-")
+            .replace(".", "-")
+            .replace("\\", "-")
+            .replace(": ", ":0")[:19]
+        )
+        return datetime.strptime(cleaned_date_string, "%Y-%m-%d %H-%M-%S")
 
     def _read_exif_value(self, tag_name, expected_type=str):
-        EXIF_DATE_FORMATS = re.compile(r'\d{4}[/:]\d{2}[/:]\d{2} \d{2}:\d{2}:\d{2}')
+        EXIF_DATE_FORMATS = re.compile(r"\d{4}[/:]\d{2}[/:]\d{2} \d{2}:\d{2}:\d{2}")
         if self._has_exif_tags(tag_name):
             tag = self.exif_tags[tag_name]
             if tag.field_type == 2:
                 assert type(tag.values) == str
                 if EXIF_DATE_FORMATS.match(tag.values):
-                    assert expected_type == datetime, f'Expected {expected_type}, got datetime: {tag.values}'
+                    assert expected_type == datetime, f"Expected {expected_type}, got datetime: {tag.values}"
                     return self._parse_exif_date_strings(tag.values)
-                #assert expected_type == str, f'Expected {expected_type}, got str: {tag.values}'
+                # assert expected_type == str, f'Expected {expected_type}, got str: {tag.values}'
                 if expected_type == datetime:
-                    print(f'Expected {expected_type}, got str: {tag.values}')
+                    print(f"Expected {expected_type}, got str: {tag.values}")
                     return datetime.now()
                 return tag.values
             elif tag.field_type in (
                 3,
                 4,
             ):
-                assert expected_type == int, f'Expected {expected_type}, got int: {tag.values}'
+                assert expected_type == int, f"Expected {expected_type}, got int: {tag.values}"
                 return tag.values[0]
             else:
-                raise Exception(f'Unsupported type: {tag.field_type}')
+                raise Exception(f"Unsupported type: {tag.field_type}")
         return None
 
     def __lt__(self, other):
@@ -138,7 +147,7 @@ class File(BaseFilesystemObject):
 class Directory(BaseFilesystemObject):
     @property
     def base_type(self):
-        return '<DIR>'
+        return "<DIR>"
 
     def __lt__(self, other):
         if type(other) == Directory:
