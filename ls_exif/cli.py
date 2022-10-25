@@ -3,22 +3,6 @@ from rich.table import Table
 
 from .filesystem import Directory, File
 
-# desired_tags = ['make', 'model', 'x_resolution', 'y_resolution', 'datetime_digitized']
-desired_tags = ["Image Make", "Image Model", "EXIF ExifImageWidth", "EXIF ExifImageLength", "Image DateTime"]
-headers = (
-    "Name",
-    "Base Type",
-    "Size",
-    "Modification Date",
-    "Taken Date",
-    "Resolution",
-    "Camera",
-)
-
-
-# def colorize(color, text):
-#    return f"{color}{text}{Style.RESET_ALL}"
-
 
 def print_tabular_listing(console, base_dir, dirs, files):
     from rich.console import Console
@@ -36,6 +20,7 @@ def print_tabular_listing(console, base_dir, dirs, files):
         f.modification_date and f.modification_date.isoformat(),
         f.taken_date and f.taken_date.isoformat(),
         f.resolution,
+        f.gps,
         f.camera and escape(f.camera),
     )
 
@@ -48,6 +33,7 @@ def print_tabular_listing(console, base_dir, dirs, files):
     table.add_column("Modification Date")
     table.add_column("Taken Date", style="green")
     table.add_column("Resolution", style="yellow")
+    table.add_column("GPS", style="blue")
     table.add_column("Camera", style="magenta")
 
     for d in dirs:

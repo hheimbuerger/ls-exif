@@ -81,6 +81,11 @@ class File(BaseFilesystemObject):
             return
 
     @property
+    def gps(self):
+        GPS_TAGS = ('GPS GPSVersionID', 'GPS GPSLatitudeRef', 'GPS GPSLatitude', 'GPS GPSLongitudeRef', 'GPS GPSLongitude', 'Image GPSInfo',)
+        return 'yes' if self._has_exif_tags(*GPS_TAGS) else 'no'
+
+    @property
     def camera(self):
         if self._has_exif_tags("Image Make", "Image Model"):
             make = self._read_exif_value("Image Make")
